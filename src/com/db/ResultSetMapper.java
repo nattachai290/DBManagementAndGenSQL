@@ -1,4 +1,4 @@
-package com.ktbcs.db;
+package com.db;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +16,7 @@ import javax.persistence.Column;
 
 import org.apache.commons.beanutils.BeanUtils;
 
-import com.ktbcs.db.manager.DBManager;
+import com.db.manager.DBManager;
 
 public class ResultSetMapper<T> extends DBManager {
 

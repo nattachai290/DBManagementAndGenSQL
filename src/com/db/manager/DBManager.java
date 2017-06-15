@@ -1,4 +1,4 @@
-package com.ktbcs.db.manager;
+package com.db.manager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,4 +1,4 @@
-package com.ktbcs.db;
+package com.db;
 
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;

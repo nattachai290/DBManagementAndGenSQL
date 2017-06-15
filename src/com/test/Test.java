@@ -1,6 +1,6 @@
-package com.ktbcs.test;
+package com.test;
 
-import com.ktbcs.db.GenNativeSQL;
+import com.db.GenNativeSQL;
 
 public class Test {
 

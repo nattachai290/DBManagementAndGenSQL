@@ -1,4 +1,4 @@
-package com.ktbcs.db.manager;
+package com.db.manager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,21 +12,10 @@ import javax.sql.DataSource;
 public class DBConnectionManager {
 
 	public static Connection getEMCIConnection() throws SQLException,Exception {
-    	return getConnection("eMCIODSDataSource");
-//    	return getJdbcConnection("jdbc:db2://10.2.154.15:50014/CORU", "coradm", "coradm"); //For Test UAT Local Only
-//    	return getJdbcConnection("jdbc:db2://10.2.154.15:50013/CORT", "coradm", "coradm"); //For Test SIT Local Only
+    	return getConnection("nameDataSource");
+//    	return getJdbcConnection("jdbc:db2://host:port/dbName", "user", "pass"); //For Test Local Only
     }
  
-	public static Connection getCBPayConnection() throws SQLException,Exception {
-    	return getConnection("CBPayDataSource");
-    }
-	public static Connection getLogODSConnection() throws SQLException,Exception {
-    	return getConnection("LogODSDataSource");
-    }
-	public static Connection getPortalConnection() throws SQLException,Exception {
-    	return getConnection("portalODSDataSource");
-    }
-	
 	 private static Connection getJdbcConnection(String url,String user,String pass) {
 		// TODO Auto-generated method stub
 		  Connection conn = null;
