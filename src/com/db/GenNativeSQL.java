@@ -12,8 +12,21 @@ import javax.persistence.Table;
 public class GenNativeSQL {
 
 	private Integer count = null;
+	private Object bean;
+
+	public GenNativeSQL(){
+
+	}
+
+	public GenNativeSQL(Object obj){
+		this.bean = obj;
+	}
+
+	public PreparedStatement update(){
+		return null;
+	}
 	
-	public String genInsertFromClass(Object entity){
+	private String genInsertFromClass(Object entity){
 		StringBuilder sqlHeader = new StringBuilder();
 		StringBuilder sqlTail = new StringBuilder();
 		boolean checkNull = true;
@@ -47,7 +60,7 @@ public class GenNativeSQL {
 		return checkNull? null:sqlHeader.toString();
 	}
 	
-	public PreparedStatement genInsertPreparedStatement(Object entity, PreparedStatement prepared){
+	private PreparedStatement genInsertPreparedStatement(Object entity, PreparedStatement prepared){
 		try{
 			Class<? extends Object> bean = entity.getClass();
 			Field[] fields = bean.getDeclaredFields();
@@ -59,7 +72,7 @@ public class GenNativeSQL {
 		return prepared;
 	}
 
-	public String genUpdateFromClass(Object entity,Object entityKey){
+	private String genUpdateFromClass(Object entity,Object entityKey){
 		StringBuilder sqlHeader = new StringBuilder();
 		StringBuilder sqlTail = new StringBuilder();
 		boolean checkNull = true;
@@ -67,7 +80,7 @@ public class GenNativeSQL {
 		try{
 			Class<? extends Object> bean = entity.getClass();
 			Class<? extends Object> key = entityKey.getClass();
-			
+
 			Table table = (Table) bean.getAnnotation(Table.class);
 			Field[] fields = bean.getDeclaredFields();
 			Field[] fieldsKey = key.getDeclaredFields();
@@ -100,7 +113,7 @@ public class GenNativeSQL {
 		return (checkNull || checkNullKey) ? null: sqlHeader.toString();
 	}
 	
-	public PreparedStatement genUpdatePreparedStatement(Object entity,Object entity2, PreparedStatement prepared){
+	private PreparedStatement genUpdatePreparedStatement(Object entity,Object entity2, PreparedStatement prepared){
 		try{
 			Class<? extends Object> bean = entity.getClass();
 			Class<? extends Object> bean2 = entity2.getClass();
@@ -116,7 +129,7 @@ public class GenNativeSQL {
 		return prepared;
 	}
 	
-	public String genSelectFromClass(Object entity,boolean star){
+	private String genSelectFromClass(Object entity,boolean star){
 		StringBuilder sql = new StringBuilder();
 		boolean checkNull = true;
 		try{
