@@ -1,6 +1,6 @@
 package com.test;
 
-import com.db.GenNativeSQL;
+import com.jdbc.controller.GenNativeSQL;
 import com.db.manager.DBConnectionManager;
 
 public class Test {
