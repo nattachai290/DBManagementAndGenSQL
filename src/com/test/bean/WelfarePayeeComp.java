@@ -1,4 +1,4 @@
-package com.test;
+package com.test.bean;
 // Generated Jul 6, 2017 6:12:17 PM by Hibernate Tools 3.5.0.Final
 
 import javax.persistence.*;

@@ -4,7 +4,7 @@ import com.db.ResultSetMapper;
 import com.jdbc.bean.Name;
 import com.jdbc.bean.Oper;
 import com.jdbc.controller.GenNativeSQL;
-import com.db.manager.DBConnectionManager;
+import com.test.bean.WelfarePayeeComp;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,20 +18,36 @@ public class Test {
 	public static void main(String[] args) throws Exception {
 
 		Connection conn = getConnection();
-		//Update parameter Object from bean
-		GenNativeSQL sqlUpdate = GenNativeSQL.forCLASS("");
+
+		WelfarePayeeComp payeeComp = new WelfarePayeeComp();
+		payeeComp.setWpcCreateBy("");
+
+		//--------------------------- Update parameter Object from bean ---------------------------
+		GenNativeSQL sqlUpdate = GenNativeSQL.forCLASS(payeeComp);
 		sqlUpdate.settingUpdate();
+
+		//Condition
+		sqlUpdate.where(Oper.between("name","ket1","key2"));
+		sqlUpdate.where(Oper.in("name",new ArrayList<String>()));
+		sqlUpdate.where(Oper.eq("key1","key2"));
+		sqlUpdate.where(Oper.ge("key1","key2"));
+		sqlUpdate.where(Oper.gt("key1","key2"));
+		sqlUpdate.where(Oper.le("key1","key2"));
+		sqlUpdate.where(Oper.lt("key1","key2"));
+		sqlUpdate.where(Oper.like("name","key2%"));
+		sqlUpdate.where(Oper.notEq("name","key2%"));
+
 		PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate.getNativeSQL());
 		sqlUpdate.settingPreparedStatement(psUpdate).executeUpdate();
 
-		//Insert parameter Object from bean
-		GenNativeSQL sqlInsert = GenNativeSQL.forCLASS("");
+		//--------------------------- Insert parameter Object from bean ---------------------------
+		GenNativeSQL sqlInsert = GenNativeSQL.forCLASS(payeeComp);
 		sqlInsert.settingInsert();
 		PreparedStatement psInsert = conn.prepareStatement(sqlInsert.getNativeSQL());
 		sqlInsert.settingPreparedStatement(psInsert).executeUpdate();
 
-		//Select parameter Class from bean
-		GenNativeSQL sqlSelect = GenNativeSQL.forCLASS("");
+		//--------------------------- Select parameter Class from bean ---------------------------
+		GenNativeSQL sqlSelect = GenNativeSQL.forCLASS(WelfarePayeeComp.class);
 		sqlSelect.settingSelect();
 		//Alias
 		sqlSelect.alias(Name.as("name","alias"));

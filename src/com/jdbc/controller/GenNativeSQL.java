@@ -6,6 +6,7 @@ import com.jdbc.bean.SQLValue;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Table;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
@@ -138,6 +139,7 @@ public class GenNativeSQL extends SQLValue {
 						sqlHeader.append(column.name()+" = ? ,");
 						this.list.add(me.invoke(obj));
 					}
+				}else if(me.isAnnotationPresent(EmbeddedId.class)){
 				}
 			}
 
