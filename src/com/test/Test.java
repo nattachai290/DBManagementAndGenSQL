@@ -3,7 +3,7 @@ package com.test;
 import com.db.ResultSetMapper;
 import com.jdbc.bean.Name;
 import com.jdbc.bean.Oper;
-import com.jdbc.controller.GenNativeSQL;
+import com.jdbc.GenNativeSQL;
 import com.test.bean.Amphur;
 import com.test.bean.AmphurId;
 import com.test.bean.WelfarePayeeComp;
