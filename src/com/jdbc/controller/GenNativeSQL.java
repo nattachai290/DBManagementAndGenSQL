@@ -104,6 +104,18 @@ public class GenNativeSQL extends SQLValue {
 						sql2.append("?, ");
 						this.list.add(me.invoke(obj));
 					}
+				}else if(me.isAnnotationPresent(EmbeddedId.class)){
+					Class<? extends Object> _class_id = me.invoke(obj).getClass();
+					Method[] _method = _class_id.getDeclaredMethods();
+					for(Method _me : _method){
+						_me.setAccessible(true);
+						if(_me.isAnnotationPresent(Column.class) && _me.invoke(me.invoke(obj))!=null){
+							Column _column = _me.getAnnotation(Column.class);
+							sql1.append(_column.name()+", ");
+							sql2.append("?, ");
+							this.list.add(_me.invoke(me.invoke(obj)));
+						}
+					}
 				}
 			}
 			sql1.deleteCharAt(sql1.toString().length()-2);
@@ -140,6 +152,16 @@ public class GenNativeSQL extends SQLValue {
 						this.list.add(me.invoke(obj));
 					}
 				}else if(me.isAnnotationPresent(EmbeddedId.class)){
+					Class<? extends Object> _class_id = me.invoke(obj).getClass();
+					Method[] _method = _class_id.getDeclaredMethods();
+					for(Method _me : _method){
+						_me.setAccessible(true);
+						if(_me.isAnnotationPresent(Column.class) && _me.invoke(me.invoke(obj))!=null){
+							Column _column = _me.getAnnotation(Column.class);
+							sqlHeader.append(_column.name()+" = ? ,");
+							this.list.add(_me.invoke(me.invoke(obj)));
+						}
+					}
 				}
 			}
 
