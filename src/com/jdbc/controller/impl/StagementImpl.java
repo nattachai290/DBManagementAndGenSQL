@@ -19,8 +19,8 @@ public class StagementImpl extends SQLValue implements Stagement {
 
     @Override
     public void select(Class classz) {
-        if(validateOnecQuery()) return;
-        StringBuilder sql = new StringBuilder("");
+        if(validateOnceQuery()) return;
+        StringBuilder sql = new StringBuilder();
         try{
             Table table = (Table) classz.getAnnotation(Table.class);
             Method[] method = classz.getDeclaredMethods();
@@ -33,10 +33,7 @@ public class StagementImpl extends SQLValue implements Stagement {
             }
             sql.deleteCharAt(sql.toString().length()-2);
             setSqlHeader(sql.toString());
-
-            sql = new StringBuilder("");
-            sql.append(" FROM "+table.name());
-            setSqlMid(sql.toString());
+            setSqlMid(" FROM "+table.name());
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -47,7 +44,7 @@ public class StagementImpl extends SQLValue implements Stagement {
 
     @Override
     public void update(Object obj) {
-        if(validateOnecQuery()) return;
+        if(validateOnceQuery()) return;
         StringBuilder sqlHeader = new StringBuilder();
 
         try{
@@ -94,10 +91,10 @@ public class StagementImpl extends SQLValue implements Stagement {
 
     @Override
     public void insert(Object obj) {
-        if(validateOnecQuery()) return;
+        if(validateOnceQuery()) return;
 
-        StringBuilder sql1 = new StringBuilder("");
-        StringBuilder sql2 = new StringBuilder("");
+        StringBuilder sql1 = new StringBuilder();
+        StringBuilder sql2 = new StringBuilder();
         try{
             Class<? extends Object> classz = obj.getClass();
             Table table = (Table) classz.getAnnotation(Table.class);
@@ -168,7 +165,7 @@ public class StagementImpl extends SQLValue implements Stagement {
         return ps;
     }
 
-    private boolean validateOnecQuery() {
-        return 	this.insertNow || this.selectNow || this.updateNow;
+    private boolean validateOnceQuery() {
+        return this.insertNow || this.selectNow || this.updateNow;
     }
 }
