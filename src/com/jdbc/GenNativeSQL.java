@@ -43,10 +43,6 @@ public class GenNativeSQL extends SQLValue {
 
     public void settingUpdate() {
         update(this.bean);
-
-        for (Object ob : this.list) {
-            System.out.println(ob);
-        }
     }
 
     public PreparedStatement settingPreparedStatement(PreparedStatement ps) {

@@ -105,7 +105,7 @@ public class Test {
 
         //--------------------------- Insert parameter Object from bean ---------------------------
         GenNativeSQL sqlInsert = GenNativeSQL.forCLASS(payeeComp);
-//        sqlInsert.settingInsert();
+        sqlInsert.settingInsert();
         PreparedStatement psInsert = conn.prepareStatement(sqlInsert.getNativeSQL());
         sqlInsert.settingPreparedStatement(psInsert).executeUpdate();
     }
@@ -113,7 +113,7 @@ public class Test {
 	private void testSelect(Connection conn) throws SQLException {
         //--------------------------- Select parameter Class from bean ---------------------------
         GenNativeSQL sqlSelect = GenNativeSQL.forCLASS(WelfarePayeeComp.class);
-//        sqlSelect.settingSelect();
+        sqlSelect.settingSelect();
         //Alias
         sqlSelect.alias(Name.as("name","alias"));
 
