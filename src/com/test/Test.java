@@ -4,9 +4,7 @@ import com.db.ResultSetMapper;
 import com.jdbc.bean.Name;
 import com.jdbc.bean.Oper;
 import com.jdbc.GenNativeSQL;
-import com.test.bean.Amphur;
-import com.test.bean.AmphurId;
-import com.test.bean.WelfarePayeeComp;
+import com.test.bean.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -56,18 +54,34 @@ public class Test {
 
 	private static void testUpdate(Connection conn) throws SQLException {
 
-        AmphurId amphurId = new AmphurId();
-        amphurId.setAmprCd("0001");
-        amphurId.setAmprCtryCd("0002");
-        amphurId.setAmprPronProvnCd("0003");
+        BotBranchInstId botBranchInstId = new BotBranchInstId();
+        botBranchInstId.setBranchInstId(888L);
 
-        Amphur amphur = new Amphur();
-        amphur.setId(amphurId);
-        amphur.setAmprCreatBy("arm");
+        BotBranchInstId botBranchInstId2 = new BotBranchInstId();
+        botBranchInstId2.setBranchInstId(666L);
+
+        BotBranchInstId botBranchInstId3 = new BotBranchInstId();
+        botBranchInstId3.setBranchInstId(444L);
+
+        PaymentCollectionFees paymentCollectionFees = new PaymentCollectionFees();
+        paymentCollectionFees.setGroupHeaderId(99L);
+
+        BotPartyId botPartyId = new BotPartyId();
+        botPartyId.setPartyId(123L);
+
+        BotGroupHeader botGroupHeader = new BotGroupHeader();
+        botGroupHeader.setGroupHeaderId(1L);
+        botGroupHeader.setBotBranchInstIdByCdtragt(botBranchInstId);
+        botGroupHeader.setBotBranchInstIdByFwdgagt(botBranchInstId2);
+        botGroupHeader.setBotBranchInstIdByDbtragt(botBranchInstId3);
+        botGroupHeader.setPaymentCollectionFees(paymentCollectionFees);
+        botGroupHeader.setBotPartyId(botPartyId);
 
         //--------------------------- Update parameter Object from bean ---------------------------
-        GenNativeSQL sqlUpdate = GenNativeSQL.forCLASS(amphur);
+        GenNativeSQL sqlUpdate = GenNativeSQL.forCLASS(botGroupHeader);
         sqlUpdate.settingUpdate();
+        System.out.println(sqlUpdate.getNativeSQL());
+
 
         //Condition
         sqlUpdate.where(Oper.between("name","KET1","key2"));
@@ -91,7 +105,7 @@ public class Test {
 
         //--------------------------- Insert parameter Object from bean ---------------------------
         GenNativeSQL sqlInsert = GenNativeSQL.forCLASS(payeeComp);
-        sqlInsert.settingInsert();
+//        sqlInsert.settingInsert();
         PreparedStatement psInsert = conn.prepareStatement(sqlInsert.getNativeSQL());
         sqlInsert.settingPreparedStatement(psInsert).executeUpdate();
     }
@@ -99,7 +113,7 @@ public class Test {
 	private void testSelect(Connection conn) throws SQLException {
         //--------------------------- Select parameter Class from bean ---------------------------
         GenNativeSQL sqlSelect = GenNativeSQL.forCLASS(WelfarePayeeComp.class);
-        sqlSelect.settingSelect();
+//        sqlSelect.settingSelect();
         //Alias
         sqlSelect.alias(Name.as("name","alias"));
 
