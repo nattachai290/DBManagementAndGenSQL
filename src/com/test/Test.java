@@ -94,8 +94,9 @@ public class Test {
 
         //--------------------------- Update parameter Object from bean ---------------------------
         GenNativeSQL sqlUpdate = GenNativeSQL.forCLASS(amphur);
+        sqlUpdate.settingUpdateWithConnection(conn).executeUpdate();
         sqlUpdate.settingUpdate();
-        System.out.println(sqlUpdate.getNativeSQL());
+//        System.out.println(sqlUpdate.getNativeSQL());
 
 
         //Condition

@@ -8,6 +8,7 @@ public class SQLValue {
     protected StringBuilder middle = new StringBuilder();
     protected StringBuilder tailer = new StringBuilder();
     protected Object bean;
+//    protected Object key_bean;
     protected Class class_bean;
     protected List<Object> list;
 

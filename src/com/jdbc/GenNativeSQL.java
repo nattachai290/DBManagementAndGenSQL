@@ -8,6 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import javax.persistence.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,12 @@ public class GenNativeSQL extends SQLValue {
         this.class_bean = obj.getClass();
         this.bean = obj;
     }
+
+//    public GenNativeSQL(Object bean,Object key_bean) {
+//        this.bean = bean;
+//        this.key_bean = key_bean;
+//    }
+
 
     public GenNativeSQL(Class classz) {
         this.class_bean = classz;
@@ -34,21 +41,36 @@ public class GenNativeSQL extends SQLValue {
         return nativeSql;
     }
 
+//    public static GenNativeSQL forCLASS(Object entity,Object key) {
+//        return new GenNativeSQL(entity,key);
+//    }
+
     public void settingSelect() {
         select(this.class_bean);
 
     }
 
-    public void settingInsert() {
+    public PreparedStatement settingInsertWithConnection(Connection connection) throws SQLException {
+        insert(this.bean);
+        PreparedStatement prepareStatement = connection.prepareStatement(getNativeSQL());
+        return settingPreparedStatement(prepareStatement);
+    }
+
+    public void settingInsert(){
         insert(this.bean);
     }
 
-    public void settingUpdate() {
+
+    public PreparedStatement settingUpdateWithConnection(Connection connection) throws SQLException {
         update(this.bean);
-        for(Object obj : this.list){
-            System.out.println(obj);
-        }
+        PreparedStatement prepareStatement = connection.prepareStatement(getNativeSQL());
+        return settingPreparedStatement(prepareStatement);
     }
+
+    public void settingUpdate(){
+        update(this.bean);
+    }
+
 
     public PreparedStatement settingPreparedStatement(PreparedStatement ps) {
         return preparedStatement(this.list, ps);
