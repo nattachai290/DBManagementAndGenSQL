@@ -181,8 +181,8 @@ public class GenNativeSQL extends SQLValue {
             }
             sql1.deleteCharAt(sql1.toString().length() - 2);
             sql2.deleteCharAt(sql2.toString().length() - 2);
-            sql1.append(" ) ");
-            sql2.append(" ) ");
+            sql1.append(") ");
+            sql2.append(") ");
             setSqlHeader(sql1.toString());
             setSqlMid(sql2.toString());
         } catch (Exception e) {

@@ -17,7 +17,10 @@ public class Test {
 	 */
 	public static void main(String[] args) throws Exception {
         System.out.println("------------- Start ---------------");
-        testUpdate(null);
+//        testUpdate(null);
+        testInsert(null);
+
+
 
         System.out.println("------------- end ---------------");
     }
@@ -98,19 +101,40 @@ public class Test {
         sqlUpdate.settingPreparedStatement(psUpdate).executeUpdate();*/
     }
 
-	private void testInsert(Connection conn) throws SQLException {
+	public static void testInsert(Connection conn) throws SQLException {
 
-        WelfarePayeeComp payeeComp = new WelfarePayeeComp();
-        payeeComp.setWpcCreateBy("");
+        BotBranchInstId botBranchInstId = new BotBranchInstId();
+        botBranchInstId.setBranchInstId(888L);
+
+        BotBranchInstId botBranchInstId2 = new BotBranchInstId();
+        botBranchInstId2.setBranchInstId(666L);
+
+        BotBranchInstId botBranchInstId3 = new BotBranchInstId();
+        botBranchInstId3.setBranchInstId(444L);
+
+        PaymentCollectionFees paymentCollectionFees = new PaymentCollectionFees();
+        paymentCollectionFees.setGroupHeaderId(99L);
+
+        BotPartyId botPartyId = new BotPartyId();
+        botPartyId.setPartyId(123L);
+
+        BotGroupHeader botGroupHeader = new BotGroupHeader();
+        botGroupHeader.setGroupHeaderId(1L);
+        botGroupHeader.setBotBranchInstIdByCdtragt(botBranchInstId);
+        botGroupHeader.setBotBranchInstIdByFwdgagt(botBranchInstId2);
+        botGroupHeader.setBotBranchInstIdByDbtragt(botBranchInstId3);
+        botGroupHeader.setPaymentCollectionFees(paymentCollectionFees);
+        botGroupHeader.setBotPartyId(botPartyId);
 
         //--------------------------- Insert parameter Object from bean ---------------------------
-        GenNativeSQL sqlInsert = GenNativeSQL.forCLASS(payeeComp);
+        GenNativeSQL sqlInsert = GenNativeSQL.forCLASS(botGroupHeader);
         sqlInsert.settingInsert();
-        PreparedStatement psInsert = conn.prepareStatement(sqlInsert.getNativeSQL());
-        sqlInsert.settingPreparedStatement(psInsert).executeUpdate();
+        System.out.println(sqlInsert.getNativeSQL());
+//        PreparedStatement psInsert = conn.prepareStatement(sqlInsert.getNativeSQL());
+//        sqlInsert.settingPreparedStatement(psInsert).executeUpdate();
     }
 
-	private void testSelect(Connection conn) throws SQLException {
+    public static void testSelect(Connection conn) throws SQLException {
         //--------------------------- Select parameter Class from bean ---------------------------
         GenNativeSQL sqlSelect = GenNativeSQL.forCLASS(WelfarePayeeComp.class);
         sqlSelect.settingSelect();
