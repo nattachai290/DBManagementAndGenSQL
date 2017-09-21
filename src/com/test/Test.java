@@ -84,7 +84,7 @@ public class Test {
 
 
         //Condition
-        sqlUpdate.where(Oper.between("name","KET1","key2"));
+       /* sqlUpdate.where(Oper.between("name","KET1","key2"));
         sqlUpdate.where(Oper.in("name",new ArrayList<String>()));
         sqlUpdate.where(Oper.eq("key1","key2"));
         sqlUpdate.where(Oper.ge("key1","key2"));
@@ -95,7 +95,7 @@ public class Test {
         sqlUpdate.where(Oper.notEq("name","key2%"));
 
         PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate.getNativeSQL());
-        sqlUpdate.settingPreparedStatement(psUpdate).executeUpdate();
+        sqlUpdate.settingPreparedStatement(psUpdate).executeUpdate();*/
     }
 
 	private void testInsert(Connection conn) throws SQLException {

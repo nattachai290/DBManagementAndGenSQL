@@ -6,6 +6,7 @@ import com.jdbc.bean.SQLValue;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,6 +36,7 @@ public class GenNativeSQL extends SQLValue {
 
     public void settingSelect() {
         select(this.class_bean);
+
     }
 
     public void settingInsert() {
@@ -43,6 +45,9 @@ public class GenNativeSQL extends SQLValue {
 
     public void settingUpdate() {
         update(this.bean);
+        for(Object obj : this.list){
+            System.out.println(obj);
+        }
     }
 
     public PreparedStatement settingPreparedStatement(PreparedStatement ps) {
@@ -73,6 +78,54 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
+    private String checkAnnotation(Method method,Object obj) throws InvocationTargetException, IllegalAccessException {
+        String column_txt = null;
+        Object value = null;
+        if (method.isAnnotationPresent(Column.class)){
+            value = method.invoke(obj);
+        }else if (method.isAnnotationPresent(EmbeddedId.class)){
+            value = method.invoke(obj);
+        }else if (method.isAnnotationPresent(JoinColumn.class)) {
+            value = method.invoke(obj);
+        }
+
+        if (method.isAnnotationPresent(Column.class) && value != null) {
+            if (!method.getReturnType().isPrimitive()
+                    || method.getReturnType().isPrimitive() && ((Number) value).doubleValue() != 0) {
+                Column column = method.getAnnotation(Column.class);
+                column_txt = column.name();
+                this.list.add(value);
+            }
+        }else if (method.isAnnotationPresent(EmbeddedId.class)) {
+            Class<? extends Object> _class_id = value.getClass();
+            Method[] _method = _class_id.getDeclaredMethods();
+            for (Method _me : _method) {
+                _me.setAccessible(true);
+                if (_me.isAnnotationPresent(Column.class) && _me.invoke(value) != null) {
+                    Column _column = _me.getAnnotation(Column.class);
+                    column_txt =_column.name();
+                    this.list.add(_me.invoke(value));
+                }
+            }
+        }else if (method.isAnnotationPresent(JoinColumn.class)) {
+            JoinColumn join = method.getAnnotation(JoinColumn.class);
+            if (!(join.referencedColumnName() != null && !join.referencedColumnName().trim().equalsIgnoreCase(""))) {
+
+                Class<? extends Object> _class_id = method.invoke(obj).getClass();
+                Method[] _method = _class_id.getDeclaredMethods();
+                for (Method _me : _method) {
+                    _me.setAccessible(true);
+                    if (_me.isAnnotationPresent(Id.class) && _me.invoke(value) != null) {
+                        column_txt = join.name();
+                        this.list.add(_me.invoke(value));
+                    }
+                }
+            }
+
+        }
+        return column_txt;
+    }
+
     private void update(Object obj) {
         if (validateOnceQuery()) return;
         StringBuilder sqlHeader = new StringBuilder();
@@ -87,40 +140,11 @@ public class GenNativeSQL extends SQLValue {
             sqlHeader.append("UPDATE " + table.name() + " SET ");
             for (Method me : method) {
                 me.setAccessible(true);
-                if (me.isAnnotationPresent(Column.class) && me.invoke(obj) != null) {
-                    if (!me.getReturnType().isPrimitive() || me.getReturnType().isPrimitive() && ((Number) me.invoke(obj)).doubleValue() != 0) {
-                        Column column = me.getAnnotation(Column.class);
-                        sqlHeader.append(column.name() + " = ? ,");
-                        this.list.add(me.invoke(obj));
-                    }
-                } else if (me.isAnnotationPresent(EmbeddedId.class)) {
-                    Class<? extends Object> _class_id = me.invoke(obj).getClass();
-                    Method[] _method = _class_id.getDeclaredMethods();
-                    for (Method _me : _method) {
-                        _me.setAccessible(true);
-                        if (_me.isAnnotationPresent(Column.class) && _me.invoke(me.invoke(obj)) != null) {
-                            Column _column = _me.getAnnotation(Column.class);
-                            sqlHeader.append(_column.name() + " = ? ,");
-                            this.list.add(_me.invoke(me.invoke(obj)));
-                        }
-                    }
-                } else if (me.isAnnotationPresent(JoinColumn.class)) {
-                    JoinColumn join = me.getAnnotation(JoinColumn.class);
-                    if (!(join.referencedColumnName() != null && !join.referencedColumnName().trim().equalsIgnoreCase(""))) {
-                        sqlHeader.append(join.name() + " = ? ,");
-
-                        Class<? extends Object> _class_id = me.invoke(obj).getClass();
-                        Method[] _method = _class_id.getDeclaredMethods();
-                        for (Method _me : _method) {
-                            _me.setAccessible(true);
-                            if (_me.isAnnotationPresent(Id.class) && _me.invoke(me.invoke(obj)) != null) {
-                                this.list.add(_me.invoke(me.invoke(obj)));
-                            }
-                        }
-                    }
+                String txt = checkAnnotation(me,obj);
+                if(txt!=null){
+                    sqlHeader.append(txt + " = ? ,");
                 }
             }
-
             sqlHeader.deleteCharAt(sqlHeader.toString().length() - 1);
             setSqlHeader(sqlHeader.toString());
         } catch (NullPointerException e) {
@@ -149,39 +173,10 @@ public class GenNativeSQL extends SQLValue {
             sql2.append(" VALUES ( ");
             for (Method me : method) {
                 me.setAccessible(true);
-                if (me.isAnnotationPresent(Column.class) && me.invoke(obj) != null) {
-                    if (!me.getReturnType().isPrimitive() || me.getReturnType().isPrimitive() && ((Number) me.invoke(obj)).doubleValue() != 0) {
-                        Column column = me.getAnnotation(Column.class);
-                        sql1.append(column.name() + ", ");
-                        sql2.append("?, ");
-                        this.list.add(me.invoke(obj));
-                    }
-                } else if (me.isAnnotationPresent(EmbeddedId.class)) {
-                    Class<? extends Object> _class_id = me.invoke(obj).getClass();
-                    Method[] _method = _class_id.getDeclaredMethods();
-                    for (Method _me : _method) {
-                        _me.setAccessible(true);
-                        if (_me.isAnnotationPresent(Column.class) && _me.invoke(me.invoke(obj)) != null) {
-                            Column _column = _me.getAnnotation(Column.class);
-                            sql1.append(_column.name() + ", ");
-                            sql2.append("?, ");
-                            this.list.add(_me.invoke(me.invoke(obj)));
-                        }
-                    }
-                } else if (me.isAnnotationPresent(JoinColumn.class)) {
-                    JoinColumn join = me.getAnnotation(JoinColumn.class);
-                    if (!(join.referencedColumnName() != null && !join.referencedColumnName().trim().equalsIgnoreCase(""))) {
-                        Class<? extends Object> _class_id = me.invoke(obj).getClass();
-                        Method[] _method = _class_id.getDeclaredMethods();
-                        for (Method _me : _method) {
-                            _me.setAccessible(true);
-                            if (_me.isAnnotationPresent(Id.class) && _me.invoke(me.invoke(obj)) != null) {
-                                sql1.append(join.name() + ", ");
-                                sql2.append("?, ");
-                                this.list.add(_me.invoke(me.invoke(obj)));
-                            }
-                        }
-                    }
+                String txt = checkAnnotation(me,obj);
+                if(txt!=null){
+                    sql1.append(txt + ", ");
+                    sql2.append("?, ");
                 }
             }
             sql1.deleteCharAt(sql1.toString().length() - 2);
