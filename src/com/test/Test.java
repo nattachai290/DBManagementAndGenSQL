@@ -8,6 +8,7 @@ import com.test.bean.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Test {
@@ -17,8 +18,8 @@ public class Test {
 	 */
 	public static void main(String[] args) throws Exception {
         System.out.println("------------- Start ---------------");
-//        testUpdate(null);
-        testInsert(null);
+        testUpdate(null);
+//        testInsert(null);
 
 
 
@@ -57,7 +58,7 @@ public class Test {
 
 	private static void testUpdate(Connection conn) throws SQLException {
 
-        BotBranchInstId botBranchInstId = new BotBranchInstId();
+        /*BotBranchInstId botBranchInstId = new BotBranchInstId();
         botBranchInstId.setBranchInstId(888L);
 
         BotBranchInstId botBranchInstId2 = new BotBranchInstId();
@@ -78,10 +79,21 @@ public class Test {
         botGroupHeader.setBotBranchInstIdByFwdgagt(botBranchInstId2);
         botGroupHeader.setBotBranchInstIdByDbtragt(botBranchInstId3);
         botGroupHeader.setPaymentCollectionFees(paymentCollectionFees);
-        botGroupHeader.setBotPartyId(botPartyId);
+        botGroupHeader.setBotPartyId(botPartyId);*/
+
+        AmphurId id = new AmphurId();
+        id.setAmprPronProvnCd("code");
+        id.setAmprCd("Am");
+
+        Amphur amphur = new Amphur();
+        amphur.setId(id);
+        amphur.setAmprCreatBy("Arm");
+        amphur.setAmprCreatDtm(new Date());
+        amphur.setAmprDesc("Desc");
+
 
         //--------------------------- Update parameter Object from bean ---------------------------
-        GenNativeSQL sqlUpdate = GenNativeSQL.forCLASS(botGroupHeader);
+        GenNativeSQL sqlUpdate = GenNativeSQL.forCLASS(amphur);
         sqlUpdate.settingUpdate();
         System.out.println(sqlUpdate.getNativeSQL());
 

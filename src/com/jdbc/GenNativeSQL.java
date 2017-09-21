@@ -78,8 +78,7 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
-    private String checkAnnotation(Method method,Object obj) throws InvocationTargetException, IllegalAccessException {
-        String column_txt = null;
+    private void checkAnnotation(Method method,Object obj,StringBuilder sql,StringBuilder sql2,String suffix,String option,boolean isJoin) throws InvocationTargetException, IllegalAccessException {
         Object value = null;
         if (method.isAnnotationPresent(Column.class)){
             value = method.invoke(obj);
@@ -87,49 +86,52 @@ public class GenNativeSQL extends SQLValue {
             value = method.invoke(obj);
         }else if (method.isAnnotationPresent(JoinColumn.class)) {
             value = method.invoke(obj);
+        }else if(method.isAnnotationPresent(Id.class)){
+            value = method.invoke(obj);
         }
 
-        if (method.isAnnotationPresent(Column.class) && value != null) {
+        if (method.isAnnotationPresent(Column.class) && value != null && isJoin) {
             if (!method.getReturnType().isPrimitive()
                     || method.getReturnType().isPrimitive() && ((Number) value).doubleValue() != 0) {
                 Column column = method.getAnnotation(Column.class);
-                column_txt = column.name();
+                System.out.println(column.name());
+                sql.append(column.name()+suffix);
                 this.list.add(value);
+
+                if(option!=null){
+                    sql2.append(option);
+                }
             }
-        }else if (method.isAnnotationPresent(EmbeddedId.class)) {
+        }else if (method.isAnnotationPresent(EmbeddedId.class) && value != null) {
             Class<? extends Object> _class_id = value.getClass();
             Method[] _method = _class_id.getDeclaredMethods();
             for (Method _me : _method) {
                 _me.setAccessible(true);
-                if (_me.isAnnotationPresent(Column.class) && _me.invoke(value) != null) {
-                    Column _column = _me.getAnnotation(Column.class);
-                    column_txt =_column.name();
-                    this.list.add(_me.invoke(value));
-                }
+                checkAnnotation(_me,value,sql,sql2,suffix,option,Boolean.TRUE);
             }
-        }else if (method.isAnnotationPresent(JoinColumn.class)) {
+        }else if (method.isAnnotationPresent(JoinColumn.class) && value != null) {
             JoinColumn join = method.getAnnotation(JoinColumn.class);
             if (!(join.referencedColumnName() != null && !join.referencedColumnName().trim().equalsIgnoreCase(""))) {
-
-                Class<? extends Object> _class_id = method.invoke(obj).getClass();
+                Class<? extends Object> _class_id = value.getClass();
+                sql.append(join.name()+suffix);
+                if(option!=null){
+                    sql2.append(option);
+                }
                 Method[] _method = _class_id.getDeclaredMethods();
                 for (Method _me : _method) {
                     _me.setAccessible(true);
-                    if (_me.isAnnotationPresent(Id.class) && _me.invoke(value) != null) {
-                        column_txt = join.name();
-                        this.list.add(_me.invoke(value));
-                    }
+                    checkAnnotation(_me,value,sql,sql2,suffix,option,Boolean.FALSE);
                 }
             }
-
+        }else if(method.isAnnotationPresent(Id.class)&& value != null){
+            this.list.add(value);
         }
-        return column_txt;
     }
 
     private void update(Object obj) {
         if (validateOnceQuery()) return;
         StringBuilder sqlHeader = new StringBuilder();
-
+        String suffix = " = ? ,";
         try {
             Class<? extends Object> classz = obj.getClass();
             Table table = (Table) classz.getAnnotation(Table.class);
@@ -140,10 +142,7 @@ public class GenNativeSQL extends SQLValue {
             sqlHeader.append("UPDATE " + table.name() + " SET ");
             for (Method me : method) {
                 me.setAccessible(true);
-                String txt = checkAnnotation(me,obj);
-                if(txt!=null){
-                    sqlHeader.append(txt + " = ? ,");
-                }
+                checkAnnotation(me,obj,sqlHeader,null,suffix,null,Boolean.TRUE);
             }
             sqlHeader.deleteCharAt(sqlHeader.toString().length() - 1);
             setSqlHeader(sqlHeader.toString());
@@ -161,6 +160,8 @@ public class GenNativeSQL extends SQLValue {
 
         StringBuilder sql1 = new StringBuilder();
         StringBuilder sql2 = new StringBuilder();
+        String suffix = ", ";
+        String option = "?, ";
         try {
             Class<? extends Object> classz = obj.getClass();
             Table table = (Table) classz.getAnnotation(Table.class);
@@ -173,11 +174,7 @@ public class GenNativeSQL extends SQLValue {
             sql2.append(" VALUES ( ");
             for (Method me : method) {
                 me.setAccessible(true);
-                String txt = checkAnnotation(me,obj);
-                if(txt!=null){
-                    sql1.append(txt + ", ");
-                    sql2.append("?, ");
-                }
+                checkAnnotation(me,obj,sql1,sql2,suffix,option,Boolean.TRUE);
             }
             sql1.deleteCharAt(sql1.toString().length() - 2);
             sql2.deleteCharAt(sql2.toString().length() - 2);
