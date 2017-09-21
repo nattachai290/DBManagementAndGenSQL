@@ -142,6 +142,7 @@ public class Test {
         //--------------------------- Insert parameter Object from bean ---------------------------
         GenNativeSQL sqlInsert = GenNativeSQL.forCLASS(botGroupHeader);
         sqlInsert.settingInsert();
+        sqlInsert.settingUpdateWithConnection(conn).executeUpdate();
         System.out.println(sqlInsert.getNativeSQL());
 //        PreparedStatement psInsert = conn.prepareStatement(sqlInsert.getNativeSQL());
 //        sqlInsert.settingPreparedStatement(psInsert).executeUpdate();
