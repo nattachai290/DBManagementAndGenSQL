@@ -16,6 +16,7 @@ public class SQLValue {
     protected Boolean selectNow = false;
     protected Boolean insertNow = false;
     protected Boolean updateNow = false;
+    protected Boolean deleteNow = false;
 
     public String getNativeSQL() {
         return header.toString()+" "+middle.toString()+" "+tailer.toString();

@@ -71,6 +71,24 @@ public class GenNativeSQL extends SQLValue {
         update(this.bean);
     }
 
+    public void settingDelete(){
+        delete(this.class_bean);
+    }
+
+    private void delete(Class classz) {
+        if (validateOnceQuery()) return;
+        StringBuilder sql = new StringBuilder();
+        try {
+            Table table = (Table) classz.getAnnotation(Table.class);
+            sql.append("DELETE FROM "+table.name());
+            setSqlHeader(sql.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.deleteNow = true;
+        }
+    }
+
 
     public PreparedStatement settingPreparedStatement(PreparedStatement ps) {
         return preparedStatement(this.list, ps);
@@ -235,7 +253,7 @@ public class GenNativeSQL extends SQLValue {
     }
 
     private boolean validateOnceQuery() {
-        return this.insertNow || this.selectNow || this.updateNow;
+        return this.insertNow || this.selectNow || this.updateNow || this.deleteNow;
     }
 
     public void where(Oper oper) {
