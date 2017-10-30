@@ -21,12 +21,6 @@ public class GenNativeSQL extends SQLValue {
         this.bean = obj;
     }
 
-//    public GenNativeSQL(Object bean,Object key_bean) {
-//        this.bean = bean;
-//        this.key_bean = key_bean;
-//    }
-
-
     public GenNativeSQL(Class classz) {
         this.class_bean = classz;
     }
@@ -40,10 +34,6 @@ public class GenNativeSQL extends SQLValue {
         }
         return nativeSql;
     }
-
-//    public static GenNativeSQL forCLASS(Object entity,Object key) {
-//        return new GenNativeSQL(entity,key);
-//    }
 
     public void settingSelect() {
         select(this.class_bean);
@@ -130,41 +120,43 @@ public class GenNativeSQL extends SQLValue {
             value = method.invoke(obj);
         }
 
-        if (method.isAnnotationPresent(Column.class) && value != null && isJoin) {
-            if (!method.getReturnType().isPrimitive()
-                    || method.getReturnType().isPrimitive() && ((Number) value).doubleValue() != 0) {
-                Column column = method.getAnnotation(Column.class);
-                System.out.println(column.name());
-                sql.append(column.name()+suffix);
-                this.list.add(value);
+        if(value!=null){
+            if (method.isAnnotationPresent(Column.class) && isJoin) {
+                if (!method.getReturnType().isPrimitive()
+                        || method.getReturnType().isPrimitive() && ((Number) value).doubleValue() != 0) {
+                    Column column = method.getAnnotation(Column.class);
+                    System.out.println(column.name());
+                    sql.append(column.name()+suffix);
+                    this.list.add(value);
 
-                if(option!=null){
-                    sql2.append(option);
+                    if(option!=null){
+                        sql2.append(option);
+                    }
                 }
-            }
-        }else if (method.isAnnotationPresent(EmbeddedId.class) && value != null) {
-            Class<? extends Object> _class_id = value.getClass();
-            Method[] _method = _class_id.getDeclaredMethods();
-            for (Method _me : _method) {
-                _me.setAccessible(true);
-                checkAnnotation(_me,value,sql,sql2,suffix,option,Boolean.TRUE);
-            }
-        }else if (method.isAnnotationPresent(JoinColumn.class) && value != null) {
-            JoinColumn join = method.getAnnotation(JoinColumn.class);
-            if (!(join.referencedColumnName() != null && !join.referencedColumnName().trim().equalsIgnoreCase(""))) {
+            }else if (method.isAnnotationPresent(EmbeddedId.class)) {
                 Class<? extends Object> _class_id = value.getClass();
-                sql.append(join.name()+suffix);
-                if(option!=null){
-                    sql2.append(option);
-                }
                 Method[] _method = _class_id.getDeclaredMethods();
                 for (Method _me : _method) {
                     _me.setAccessible(true);
-                    checkAnnotation(_me,value,sql,sql2,suffix,option,Boolean.FALSE);
+                    checkAnnotation(_me,value,sql,sql2,suffix,option,Boolean.TRUE);
                 }
+            }else if (method.isAnnotationPresent(JoinColumn.class)) {
+                JoinColumn join = method.getAnnotation(JoinColumn.class);
+                if (!(join.referencedColumnName() != null && !join.referencedColumnName().trim().equalsIgnoreCase(""))) {
+                    Class<? extends Object> _class_id = value.getClass();
+                    sql.append(join.name()+suffix);
+                    if(option!=null){
+                        sql2.append(option);
+                    }
+                    Method[] _method = _class_id.getDeclaredMethods();
+                    for (Method _me : _method) {
+                        _me.setAccessible(true);
+                        checkAnnotation(_me,value,sql,sql2,suffix,option,Boolean.FALSE);
+                    }
+                }
+            }else if(method.isAnnotationPresent(Id.class)){
+                this.list.add(value);
             }
-        }else if(method.isAnnotationPresent(Id.class)&& value != null){
-            this.list.add(value);
         }
     }
 
@@ -306,7 +298,6 @@ public class GenNativeSQL extends SQLValue {
             Method method = this.class_bean.getDeclaredMethod("get" + first + name.getKey1().substring(1));
             Column column = method.getAnnotation(Column.class);
             int index = this.header.toString().indexOf(column.name());
-
             this.header.insert(index + column.name().length(), alias);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
