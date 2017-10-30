@@ -46,9 +46,13 @@ public class ResultSetMapper<T> {
                                 Timestamp stamp = (Timestamp) columnValue;
                                 Calendar calendar = Calendar.getInstance();
                                 calendar.setTimeInMillis(stamp.getTime());
-                                BeanUtils.setProperty(bean, nameFieldMap.get(columnName), calendar.getTime());
+                                Field fieldName = bean.getClass().getDeclaredField(nameFieldMap.get(columnName));
+                                fieldName.setAccessible(true);
+                                fieldName.set(bean,calendar.getTime());
                             } else {
-                                BeanUtils.setProperty(bean, nameFieldMap.get(columnName), columnValue);
+                                Field fieldName = bean.getClass().getDeclaredField(nameFieldMap.get(columnName));
+                                fieldName.setAccessible(true);
+                                fieldName.set(bean,columnValue);
                             }
                         }
                     }
@@ -61,7 +65,7 @@ public class ResultSetMapper<T> {
             e.printStackTrace();
         } catch (InstantiationException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
         return outputList;
