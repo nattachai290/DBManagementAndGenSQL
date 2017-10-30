@@ -9,8 +9,9 @@ import java.util.List;
 public class ControllerCRUD {
 
     public boolean select(Class classz,boolean insertNow,boolean selectNow,boolean updateNow,boolean deleteNow,StringBuilder sqlHeader,StringBuilder sqlMid) {
-        if (ControllerUtils.validateOnceQuery(insertNow,selectNow,updateNow,deleteNow)) return false;
+        if (CommonUtils.validateOnceQuery(insertNow,selectNow,updateNow,deleteNow)) return false;
         StringBuilder sql = new StringBuilder();
+        boolean success = false;
         try {
             Table table = (Table) classz.getAnnotation(Table.class);
             Method[] method = classz.getDeclaredMethods();
@@ -24,18 +25,19 @@ public class ControllerCRUD {
             sql.deleteCharAt(sql.toString().length() - 2);
             sqlHeader.append(sql.toString());
             sqlMid.append(" FROM " + table.name());
-
+            success = true;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            return true;
+            return success;
         }
     }
 
-    private boolean update(Object obj,boolean insertNow,boolean selectNow,boolean updateNow,boolean deleteNow,StringBuilder sql,List<Object> listValue) {
-        if (ControllerUtils.validateOnceQuery(insertNow,selectNow,updateNow,deleteNow)) return false;
+    public boolean update(Object obj,boolean insertNow,boolean selectNow,boolean updateNow,boolean deleteNow,StringBuilder sql_header,List<Object> listValue) {
+        if (CommonUtils.validateOnceQuery(insertNow,selectNow,updateNow,deleteNow)) return false;
         StringBuilder sqlHeader = new StringBuilder();
         String suffix = " = ? ,";
+        boolean success = false;
         try {
             ControllerUtils controllerUtils = new ControllerUtils();
             Class<? extends Object> classz = obj.getClass();
@@ -50,23 +52,25 @@ public class ControllerCRUD {
                 controllerUtils.checkAnnotation(me,obj,sqlHeader,null,suffix,null,Boolean.TRUE,listValue);
             }
             sqlHeader.deleteCharAt(sqlHeader.toString().length() - 1);
-            sql.append(sqlHeader.toString());
+            sql_header.append(sqlHeader.toString());
+            success = true;
         } catch (NullPointerException e) {
             System.out.println("Not compatible class");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            return true;
+            return success;
         }
     }
 
-    private boolean insert(Object obj,boolean insertNow,boolean selectNow,boolean updateNow,boolean deleteNow,StringBuilder sqlHead,StringBuilder sqlMid,List<Object> listValue) {
-        if (ControllerUtils.validateOnceQuery(insertNow,selectNow,updateNow,deleteNow)) return false;
+    public boolean insert(Object obj,boolean insertNow,boolean selectNow,boolean updateNow,boolean deleteNow,StringBuilder sqlHead,StringBuilder sqlMid,List<Object> listValue) {
+        if (CommonUtils.validateOnceQuery(insertNow,selectNow,updateNow,deleteNow)) return false;
 
         StringBuilder sql1 = new StringBuilder();
         StringBuilder sql2 = new StringBuilder();
         String suffix = ", ";
         String option = "?, ";
+        boolean success = false;
         try {
             ControllerUtils controllerUtils = new ControllerUtils();
             Class<? extends Object> classz = obj.getClass();
@@ -88,11 +92,27 @@ public class ControllerCRUD {
             sql2.append(") ");
             sqlHead.append(sql1.toString());
             sqlMid.append(sql2.toString());
+            success = true;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            return true;
+            return success;
         }
+    }
+
+    public boolean delete(Class classz,boolean insertNow,boolean selectNow,boolean updateNow,boolean deleteNow,StringBuilder sqlHeader) {
+        if (CommonUtils.validateOnceQuery(insertNow,selectNow,updateNow,deleteNow)) return false;
+        StringBuilder sql = new StringBuilder();
+        boolean success = false;
+        try {
+            Table table = (Table) classz.getAnnotation(Table.class);
+            sql.append("DELETE FROM "+table.name());
+            sqlHeader.append(sql.toString());
+            success = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return success;
     }
 
 }

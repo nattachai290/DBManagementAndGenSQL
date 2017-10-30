@@ -10,30 +10,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ControllerUtils {
 
-    public static Object checkString(Object value) {
-        if (value instanceof String) {
-            value = "'" + value + "'";
-        } else if (value instanceof Date) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-            Date date = (Date) value;
-            value = "to_date('" + sdf.format(date) + "','dd/MM/yyyy')";
-        }
-        return value;
-    }
-
-    public static boolean validateOnceQuery(boolean insertNow, boolean selectNow, boolean updateNow, boolean deleteNow) {
-        return insertNow || selectNow || updateNow || deleteNow;
-    }
-
-    protected PreparedStatement preparedStatement(List<Object> valueList, PreparedStatement ps) {
+    public PreparedStatement preparedStatement(List<Object> valueList, PreparedStatement ps) {
         int count = 1;
         try {
             if (CollectionUtils.isNotEmpty(valueList)) {

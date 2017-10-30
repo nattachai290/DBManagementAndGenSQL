@@ -22,7 +22,7 @@ public class SQLValue {
         return header.toString()+" "+middle.toString()+" "+tailer.toString();
     }
 
-    protected void setSqlHeader(String sql) {
+/*    protected void setSqlHeader(String sql) {
         this.header.append(sql);
     }
 
@@ -32,6 +32,6 @@ public class SQLValue {
 
     protected void setSqlTail(String sql) {
         this.tailer.append(sql);
-    }
+    }*/
 
 }

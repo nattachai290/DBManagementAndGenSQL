@@ -8,8 +8,8 @@ import java.lang.reflect.Method;
 
 public class ControllerSelect {
 
-    public String where(Oper oper,boolean whereCondition,boolean insertNow,boolean updateNow,boolean selectNow,Class classz) {
-        if (insertNow || (updateNow && selectNow)) return null;
+    public void where(Oper oper,boolean whereCondition,boolean insertNow,boolean updateNow,boolean selectNow,Class classz,StringBuilder sqlTail) {
+        if (insertNow || (updateNow && selectNow)) return;
 
         StringBuilder sql = new StringBuilder();
         String operator = " " + oper.getOperation() + " ";
@@ -25,25 +25,24 @@ public class ControllerSelect {
             }
             sql.append(column.name() + operator);
             if (oper.getOperation().equalsIgnoreCase("between")) {
-                sql.append(ControllerUtils.checkString(oper.getValue()));
+                sql.append(CommonUtils.checkString(oper.getValue()));
                 sql.append(" AND ");
-                sql.append(ControllerUtils.checkString(oper.getValue2()));
+                sql.append(CommonUtils.checkString(oper.getValue2()));
             } else if (oper.getOperation().equalsIgnoreCase("in")) {
                 sql.append("(");
                 for (Object val : oper.getArryValue()) {
-                    sql.append(ControllerUtils.checkString(val) + ",");
+                    sql.append(CommonUtils.checkString(val) + ",");
                 }
                 sql.deleteCharAt(sql.toString().length() - 1);
                 sql.append(") ");
             } else {
-                sql.append(ControllerUtils.checkString(oper.getValue()));
+                sql.append(CommonUtils.checkString(oper.getValue()));
             }
+            sqlTail.append(sql.toString());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
             e.printStackTrace();
-        }finally {
-            return sql.toString();
         }
     }
 

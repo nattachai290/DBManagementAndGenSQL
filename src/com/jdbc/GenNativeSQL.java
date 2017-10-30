@@ -3,6 +3,8 @@ package com.jdbc;
 import com.jdbc.bean.Name;
 import com.jdbc.bean.Oper;
 import com.jdbc.bean.SQLValue;
+import com.jdbc.controller.ControllerCRUD;
+import com.jdbc.controller.ControllerUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
@@ -36,35 +38,47 @@ public class GenNativeSQL extends SQLValue {
     }
 
     public void settingSelect() {
-        select(this.class_bean);
-
-    }
+        ControllerCRUD controllerCRUD = new ControllerCRUD();
+        controllerCRUD.select(this.class_bean,this.insertNow,this.selectNow,this.updateNow,this.deleteNow,this.header,this.middle);
+//        select(this.class_bean);
+        }
 
     public PreparedStatement settingInsertWithConnection(Connection connection) throws SQLException {
-        insert(this.bean);
+//        insert(this.bean);
+        ControllerCRUD controllerCRUD = new ControllerCRUD();
+        controllerCRUD.insert(this.bean,this.insertNow,this.selectNow,this.updateNow,this.deleteNow,header,middle,this.list);
         PreparedStatement prepareStatement = connection.prepareStatement(getNativeSQL());
         return settingPreparedStatement(prepareStatement);
     }
 
     public void settingInsert(){
-        insert(this.bean);
+        ControllerCRUD controllerCRUD = new ControllerCRUD();
+        controllerCRUD.insert(this.bean,this.insertNow,this.selectNow,this.updateNow,this.deleteNow,header,middle,this.list);
+//        insert(this.bean);
     }
 
 
     public PreparedStatement settingUpdateWithConnection(Connection connection) throws SQLException {
-        update(this.bean);
+        ControllerCRUD controllerCRUD = new ControllerCRUD();
+        controllerCRUD.update(this.bean,this.insertNow,this.selectNow,this.updateNow,this.deleteNow,this.header,this.list);
+//        update(this.bean);
         PreparedStatement prepareStatement = connection.prepareStatement(getNativeSQL());
         return settingPreparedStatement(prepareStatement);
     }
 
     public void settingUpdate(){
-        update(this.bean);
+        ControllerCRUD controllerCRUD = new ControllerCRUD();
+        controllerCRUD.update(this.bean,this.insertNow,this.selectNow,this.updateNow,this.deleteNow,this.header,this.list);
+//        update(this.bean);
     }
 
     public void settingDelete(){
-        delete(this.class_bean);
+        ControllerCRUD controllerCRUD = new ControllerCRUD();
+        controllerCRUD.delete(this.class_bean,this.insertNow,this.selectNow,this.updateNow,this.deleteNow,this.header);
+//        delete(this.class_bean);
     }
 
+  /*  //pass
     private void delete(Class classz) {
         if (validateOnceQuery()) return;
         StringBuilder sql = new StringBuilder();
@@ -77,13 +91,16 @@ public class GenNativeSQL extends SQLValue {
         } finally {
             this.deleteNow = true;
         }
-    }
+    }*/
 
 
     public PreparedStatement settingPreparedStatement(PreparedStatement ps) {
-        return preparedStatement(this.list, ps);
+        ControllerUtils controllerUtils = new ControllerUtils();
+        PreparedStatement preparedStatement = controllerUtils.preparedStatement(this.list, ps);
+        return preparedStatement;
     }
-
+/*
+    //Pass
     private void select(Class classz) {
         if (validateOnceQuery()) return;
         StringBuilder sql = new StringBuilder();
@@ -108,6 +125,7 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
+    //Pass
     private void checkAnnotation(Method method,Object obj,StringBuilder sql,StringBuilder sql2,String suffix,String option,boolean isJoin) throws InvocationTargetException, IllegalAccessException {
         Object value = null;
         if (method.isAnnotationPresent(Column.class)){
@@ -160,6 +178,7 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
+    //Pass
     private void update(Object obj) {
         if (validateOnceQuery()) return;
         StringBuilder sqlHeader = new StringBuilder();
@@ -187,6 +206,7 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
+    //Pass
     private void insert(Object obj) {
         if (validateOnceQuery()) return;
 
@@ -221,6 +241,7 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
+    //Pass
     private PreparedStatement preparedStatement(List<Object> valueList, PreparedStatement ps) {
         int count = 1;
         try {
@@ -244,10 +265,12 @@ public class GenNativeSQL extends SQLValue {
         return ps;
     }
 
+    //Pass
     private boolean validateOnceQuery() {
         return this.insertNow || this.selectNow || this.updateNow || this.deleteNow;
     }
 
+    //Pass
     public void where(Oper oper) {
         if (this.insertNow || (this.updateNow && this.selectNow)) return;
 
@@ -288,6 +311,7 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
+    //Pass
     public void alias(Name name) {
         if (!this.selectNow) return;
 
@@ -306,6 +330,7 @@ public class GenNativeSQL extends SQLValue {
         }
     }
 
+    //Pass
     private Object checkString(Object value) {
         if (value instanceof String) {
             value = "'" + value + "'";
@@ -315,6 +340,6 @@ public class GenNativeSQL extends SQLValue {
             value = "to_date('" + sdf.format(date) + "','dd/MM/yyyy')";
         }
         return value;
-    }
+    }*/
 
 }
